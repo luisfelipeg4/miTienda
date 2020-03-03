@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Productos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductosController extends Controller
 {
@@ -42,17 +43,13 @@ class ProductosController extends Controller
         // $datosProducto = $request->all();
 
         $datosProducto = $request->except('_token');
-
-        if ($files = $request->file('Foto')) {
-            $destinationPath = 'public/uploads/'; // upload path
-            $profilefile = date('YmdHis') . "." . $files->getClientOriginalExtension();
-            $files->move($destinationPath, $profilefile);
-            $insert['Foto'] = "$profilefile";
-         }
-          
+        if ($request->file('Foto')) {
+            $datosProducto['Foto'] = $request->file('Foto')->store('public/uploads');
+            $datosProducto['Foto'] = str_replace("public/uploads", "uploads", $datosProducto['Foto']);
+        }
+        $data['created_at'] = new \DateTime();
         Productos::insert($datosProducto);
-
-        return response()->json($datosProducto);
+        return redirect('productos')->with('Mensaje', 'Producto agregado correctamente');
     }
 
     /**
@@ -77,7 +74,7 @@ class ProductosController extends Controller
         //
         $producto = Productos::findOrFail($id);
 
-        return view('productos.editar',compact('producto'));
+        return view('productos.editar', compact('producto'));
     }
 
     /**
@@ -90,19 +87,18 @@ class ProductosController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $datosProducto = $request->except('_token');
+        $datosProducto = $request->except(['_token', '_method']);
 
-        if ($files = $request->file('Foto')) {
-            $destinationPath = 'public/uploads/'; // upload path
-            $profilefile = date('YmdHis') . "." . $files->getClientOriginalExtension();
-            $files->move($destinationPath, $profilefile);
-            $insert['Foto'] = "$profilefile";
-         }
-          
-        Productos::where('id','=',$id)->update($datosProducto);
+        if ($request->file('Foto')) {
+            $producto = Productos::findOrFail($id);
+            Storage::delete('public/' . $producto->Foto);
+            $datosProducto['Foto'] = $request->file('Foto')->store('public/uploads');
+            $datosProducto['Foto'] = str_replace("public/uploads", "uploads", $datosProducto['Foto']);
+        }
+        Productos::where('id', '=', $id)->update($datosProducto);
         $producto = Productos::findOrFail($id);
 
-        return view('productos.editar',compact('producto'));
+        return redirect('productos')->with('Mensaje', 'Producto modificado con éxito');
     }
 
     /**
@@ -111,11 +107,14 @@ class ProductosController extends Controller
      * @param  \App\Productos  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy( $id)
+    public function destroy($id)
     {
         //
-        Productos::destroy($id);
+        $producto = Productos::findOrFail($id);
 
-        return redirect('productos');
+        if (Storage::delete('public/' . $producto->Foto)) {
+            Productos::destroy($id);
+        }
+        return redirect('productos')->with('Mensaje', 'Producto eliminado con éxito');
     }
 }

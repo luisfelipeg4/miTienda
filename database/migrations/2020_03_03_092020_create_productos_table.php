@@ -18,6 +18,8 @@ class CreateProductosTable extends Migration
             $table->string('Nombre');
             $table->string('Descripcion');
             $table->string('Foto');
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

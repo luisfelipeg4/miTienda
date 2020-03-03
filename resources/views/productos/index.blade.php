@@ -1,5 +1,12 @@
 <h1>Lista de productos</h1>
 
+@if(Session::has('Mensaje')){{
+    Session::get('Mensaje')
+}}
+
+@endif
+
+<a href="{{url('productos/create')}}">Agregar Producto</a>
 <table class="table table-light">
     <thead class="thead-light">
         <tr>
@@ -13,7 +20,9 @@
         @foreach($productos as $producto)
             <tr>
                 <td>{{$producto->id}}</td>
-                <td>{{$producto->Foto}}</td>
+                <td>
+                    <img src="{{ asset('storage').'/'.$producto->Foto}}" alt="" width="200">
+                </td>
                 <td>{{$producto->Nombre}}</td>
                 <td>{{$producto->Descripcion}}</td>
                 <td>
