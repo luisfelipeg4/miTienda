@@ -4,9 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>Laravel</title>
-
+    <title>Tienda</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 
@@ -23,8 +21,9 @@
         }
 
         .full-height {
-            height: 100vh;
+            height: 60%;
         }
+
 
         .flex-center {
             align-items: center;
@@ -36,7 +35,7 @@
             position: relative;
         }
 
-        .top-right {
+        .top-right {    
             position: absolute;
             right: 10px;
             top: 18px;
@@ -44,6 +43,7 @@
 
         .content {
             text-align: center;
+            width: 70%;
         }
 
         .title {
@@ -65,17 +65,52 @@
         }
     </style>
     <link href="{{asset('css/app.css')}}" rel="stylesheet">
+    @include('header')
 </head>
 
 <body>
-    <div class="flex-center position-ref full-height">
+
+    <div class="flex-center full-height ">
         <div class="content">
-            <div class="title m-b-md">
+            <table class="table table-light">
+                <thead class="thead-light">
+                    <tr>
+                        <th>id</th>
+                        <th>Foto</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($products as $product)
+                    <tr>
+                        <td>{{$product->id}}</td>
+                        <td>
+                            <img src="{{ asset('storage').'/'.$product->photo}}" alt="" width="100">
+                        </td>
+                        <td>{{$product->name}}</td>
+                        <td>{{$product->description}}</td>
+                        <td>{{$product->price}}</td>
+                        <td>
+                            <div class="form-group row">
+                                <button class="btn btn-primary m-2" type="submit" onclick="return confirm('Desea borrar el producto {{$product->name}}');">Comprar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+
+            </table>
+            <!-- <div class="title m-b-md">
                 Prueba Técnica Luis Felipe Garcia Herrrera
-            </div>
+            </div> -->
         </div>
+        
         <script src="{{asset('js/app.js')}}"></script>
     </div>
+    
 </body>
-
+@include('footer')
 </html>

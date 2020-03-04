@@ -11,9 +11,23 @@
 |
 */
 
+use App\Products;
+
 Route::get('/', function () {
-    return view('welcome');
+    $datos["products"] = Products::paginate(5);
+    return view('welcome',$datos);
 });
 
 
 Route::resource('products', 'ProductsController');
+Route::resource('orders', 'OrdersController');
+
+Route::get('/placetopay', function () {
+    return view('payment');
+});
+
+Route::get('/response', function ($request) {
+    var_dump($request);
+    return  view('welcome');
+});
+

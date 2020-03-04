@@ -41,18 +41,20 @@ class productsController extends Controller
     {
         //
         // $datosProducto = $request->all();
+        try {
+            $datosProducto = $request->except('_token');
+            if ($request->file('photo')) {
+                $datosProducto['photo'] = $request->file('photo')->store('public/uploads');
+                $datosProducto['photo'] = str_replace("public/uploads", "uploads", $datosProducto['photo']);
+            }
 
-        $datosProducto = $request->except('_token');
-        if ($request->file('photo')) {
-            $datosProducto['photo'] = $request->file('photo')->store('public/uploads');
-            $datosProducto['photo'] = str_replace("public/uploads", "uploads", $datosProducto['photo']);
+            $data['created_at'] = new \DateTime();
+            products::insert($datosProducto);
+            return redirect('products')->with('Mensaje', 'Producto agregado correctamente');
+        } catch (\Throwable $th) {
+            return redirect('products')->with('MensajeError', 'Producto agregado correctamente');
         }
-
-        // $datosProducto['price'] = number_format($datosProducto['price'] );
-
-        $data['created_at'] = new \DateTime();
-        products::insert($datosProducto);
-        return redirect('products')->with('Mensaje', 'Producto agregado correctamente');
+      
     }
 
     /**
