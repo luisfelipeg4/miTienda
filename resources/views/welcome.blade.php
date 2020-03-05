@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <title>Tienda</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -69,8 +70,10 @@
 </head>
 
 <body>
+<h5 class="text-center">Selecciona un producto para comprar</h5>
 
-    <div class="flex-center full-height ">
+    <div class="flex-center">
+    
         <div class="content">
             <table class="table table-light">
                 <thead class="thead-light">
@@ -95,7 +98,7 @@
                         <td>{{$product->price}}</td>
                         <td>
                             <div class="form-group row">
-                                <button class="btn btn-primary m-2" type="submit" onclick="return confirm('Desea borrar el producto {{$product->name}}');">Comprar</button>
+                                <a class="btn btn-primary m-2"href="{{url('/orders/create/'.$product->id)}}">Comprar</a>
                             </div>
                         </td>
                     </tr>

@@ -16,7 +16,7 @@ class productsController extends Controller
     public function index()
     {
         //
-        $datos["products"] = products::paginate(5);
+        $datos["products"] = products::all();
         return view('products.index', $datos);
     }
 
@@ -48,7 +48,7 @@ class productsController extends Controller
                 $datosProducto['photo'] = str_replace("public/uploads", "uploads", $datosProducto['photo']);
             }
 
-            $data['created_at'] = new \DateTime();
+            $datosProducto['created_at'] =  new \DateTime( 'now',  new \DateTimeZone( 'UTC' ) );
             products::insert($datosProducto);
             return redirect('products')->with('Mensaje', 'Producto agregado correctamente');
         } catch (\Throwable $th) {

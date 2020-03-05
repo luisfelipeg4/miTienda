@@ -6,7 +6,8 @@ use App\Orders;
 use App\vr;
 use Illuminate\Http\Request;
 
-class ordersController extends Controller
+use DB;
+class OrdersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,19 +17,15 @@ class ordersController extends Controller
     public function index()
     {
         //
-        $datos["orders"] = Orders::paginate(5);
+        $datos["orders"] = DB::table('orders')
+        ->join('products', function($join)
+        {
+            $join->on('orders.product_id', '=', 'products.id');
+        })
+        ->get();
         return view('orders.index', $datos);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,18 +35,36 @@ class ordersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $datosOrden= $request->except('_token');
+            
+            $datosOrden['status']='CREATED';
+            $datosOrden['created_at'] =  new \DateTime( 'now',  new \DateTimeZone( 'America/Bogota' ) );
+            Orders::insert($datosOrden);
+            return redirect('orders')->with('Mensaje', 'Orden creada correctamente');
+        } catch (\Throwable $th) {
+            // var_dump($request,$th) ;
+            // return redirect('orders')->with('MensajeError', 'Hubo un error correctamente'.$th);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\vr  $vr
+  * @param  \App\products  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(vr $vr)
+    public function show($id)
     {
         //
+        $datos["orders"]= DB::table('orders')
+        ->join('products', function($join)
+        {
+            $join->on('orders.product_id', '=', 'products.id');
+        })
+        ->where('orders.product_id', '=', $id)
+        ->get();
+        return view('orders.summary', $datos);
     }
 
     /**
@@ -60,7 +75,7 @@ class ordersController extends Controller
      */
     public function edit(vr $vr)
     {
-        //
+        
     }
 
     /**
@@ -70,9 +85,10 @@ class ordersController extends Controller
      * @param  \App\vr  $vr
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, vr $vr)
+    public function update(Request $request, $id)
     {
         //
+       
     }
 
     /**

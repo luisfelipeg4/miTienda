@@ -43,10 +43,10 @@
             <input class="form-control" type="file" name="photo" id="photo" value="{{$product->photo ?? ''}}">
         </div>
     </div>
-
-    <a class="btn btn-secondary" href="{{url('products')}}">Regresar</a>
-
-    <input class="btn btn-primary" type="submit" value="{{$type=='create'? 'Agregar': 'Modificar'}}"></button>
+    <div class="center">
+        <a class="btn btn-secondary" href="{{url('products')}}">Regresar</a>
+        <input class="btn btn-primary " type="submit" value="{{$type=='create'? 'Agregar': 'Modificar'}}"></button>
+    </div>
 </body>
 
 </html>

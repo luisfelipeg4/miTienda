@@ -9,16 +9,14 @@ $placetopay = new Dnetix\Redirection\PlacetoPay([
     'tranKey' => $secretKey,
     'url' => 'https://test.placetopay.com/redirection',
     'rest' => [
-        'timeout' => 45, // (optional) 15 by default
-        'connect_timeout' => 30, // (optional) 5 by default
+        'timeout' => 30, // (optional) 15 by default
+        'connect_timeout' => 5, // (optional) 5 by default
     ]
 ]);
 
-$reference = 'TEST_' . time();
-
 $request = [
     'payment' => [
-        'reference' => $reference,
+        'reference' => '1',
         'description' => 'Testing payment',
         'amount' => [
             'currency' => 'USD',
@@ -26,36 +24,19 @@ $request = [
         ],
         "payer" => [
             "name" => "Luis Felipe Garcia",
-            "surname" => "Luis",
             "email" => "luisfelipegarciacsj@gmail.com",
-            "documentType" => "CC",
-            "document" => "1848839248",
-            "mobile" => "3006108300",
-            "address" => [
-                "street" => "703 Dicki Island Apt. 609",
-                "city" => "North Randallstad",
-                "state" => "Antioquia",
-                "postalCode" => "46292",
-                "country" => "US",
-                "phone" => "363-547-1441 x383"
-            ]
-            ],
-            "buyer" => [
-                "name" => "Luis Felipe Garcia",
-                "surname" => "Luis",
-                "email" => "luisfelipegarciacsj@gmail.com",
-                "documentType" => "CC",
-                "document" => "1848839248",
-                "mobile" => "3006108300",
-                "address" => [
-                    "street" => "703 Dicki Island Apt. 609",
-                    "city" => "North Randallstad",
-                    "state" => "Antioquia",
-                    "postalCode" => "46292",
-                    "country" => "US",
-                    "phone" => "363-547-1441 x383"
-                ]
-            ]
+            "mobile" => "3152807334"
+        ],
+        "buyer" => [
+            "name" => "Luis Felipe Garcia",
+            "email" => "luisfelipegarciacsj@gmail.com",
+            "mobile" => "3152807334"
+        ],
+        "shipping" => [
+            "name" => "Luis Felipe Garcia",
+            "email" => "luisfelipegarciacsj@gmail.com",
+            "mobile" => "3152807334"
+        ]
     ],
     'expiration' => date('c', strtotime('+2 days')),
     'returnUrl' => 'http://localhost:8000',

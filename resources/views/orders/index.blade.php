@@ -17,10 +17,11 @@
             <thead class="thead-light">
                 <tr>
                     <th>id</th>
-                    <th>Foto</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Producto</th>
                     <th>Precio</th>
+                    <th>Cliente</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -29,21 +30,26 @@
                 <tr>
                     <td>{{$order->id}}</td>
                     <td>
-                        <img src="{{ asset('storage').'/'.$order->photo}}" alt="" width="100">
+                        <img src="{{ asset('storage').'/'.$order->photo}}" alt="" width="100">{{$order->name}}
                     </td>
-                    <td>{{$order->name}}</td>
-                    <td>{{$order->description}}</td>
                     <td>{{$order->price}}</td>
+                    <td>{{$order->customer_name}}</td>
+                    <td>{{$order->customer_email}}</td>
+                    <td>{{$order->status}}</td>
                     <td>
                         <div class="form-group row">
-                            <a href="{{url('products/'.$order->id.'/edit')}}" class="btn btn-secondary m-2">Editar</a>
-
-                            <form method="post" action="{{url('products/'.$order->id)}}">
-
+                            @if($order->status == 'CREATED')
+                            <a href="{{url('orders/'.$order->id)}}" class="btn btn-secondary m-2">Ver Resumen </a>
+                            @endif
+                            @if($order->status == 'REJECTED')
+                            <!-- <a href="{{url('products/'.$order->id.'/edit')}}" class="btn btn-secondary m-2">Editar</a> -->
+                            <p>Reintentar</p>
+                            @endif
+                            <!-- <form method="post" action="{{url('products/'.$order->id)}}">
                                 {{csrf_field()}}
                                 {{method_field('DELETE')}}
                                 <button class="btn btn-primary m-2" type="submit" onclick="return confirm('Desea borrar el producto {{$order->name}}');">Borrar</button>
-                            </form>
+                            </form> -->
                         </div>
                     </td>
                 </tr>
