@@ -22,6 +22,8 @@ Route::get('/', function () {
 Route::resource('products', 'ProductsController');
 Route::resource('orders', 'OrdersController',array('except'=>array('create')));
 
+
+
 Route::get('orders/create/{id?}', function ($id=null) {
     
     $product = products::findOrFail($id);
@@ -29,13 +31,11 @@ Route::get('orders/create/{id?}', function ($id=null) {
     return view('orders.create', compact('product'));
 });
 
-
 Route::get('/placetopay', function () {
     return view('placeToPay');
 });
 
-Route::get('/response', function ($request) {
+Route::post('/notification', function ($request) {
     var_dump($request);
-    return  view('welcome');
 });
 
