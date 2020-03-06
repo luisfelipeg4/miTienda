@@ -53,7 +53,7 @@ class productsController extends Controller
             products::insert($datosProducto);
             return redirect('products')->with('Mensaje', 'Producto agregado correctamente');
         } catch (\Throwable $th) {
-            return redirect('products')->with('MensajeError', 'Producto agregado correctamente');
+            return redirect('products/create')->with('MensajeError', 'Hubo un error al crear el producto ');
         }
       
     }

@@ -40,6 +40,11 @@
                                 <label><b>Estado : </b> Rechazada</label>
                                 <img src="{{ asset('storage').'/REJECTED.png'}}" alt="" width="100">
                                 @endif
+                                @if($order->status =='PENDING')
+
+                                <label><b>Estado : </b> Pendiente , esperando autorizacion intentalo más tarde</label>
+                                <img src="{{ asset('storage').'/PENDING.png'}}" alt="" width="100">
+                @endif
                               
                             </div>
 
@@ -85,7 +90,6 @@
                 <input class="btn btn-primary" type="submit" value="Reintentar"></button>
                 @endif
                 @if($order->status =='PENDING')
-                <input class="btn btn-primary" type="submit" value="Reintentar"></button>
                 @endif
             </div>
 

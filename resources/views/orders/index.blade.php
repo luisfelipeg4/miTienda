@@ -44,6 +44,9 @@
                         @if($order->status =='PAYED')
                        PAGADA
                         @endif
+                        @if($order->status =='PENDING')
+                       ESPERANDO AUTORIZACION
+                        @endif
                     </td>
                     <td>
                         <div class="form-group row">

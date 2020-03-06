@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 
 use DB;
 use Dnetix\Redirection\PlacetoPay;
+use Exception;
+use phpDocumentor\Reflection\Types\Integer;
+use PhpParser\Node\Expr\Print_;
 
 class OrdersController extends Controller
 {
@@ -41,14 +44,12 @@ class OrdersController extends Controller
     {
         try {
             $datosOrden = $request->except('_token');
-
             $datosOrden['status'] = 'CREATED';
             $datosOrden['created_at'] =  new \DateTime('now',  new \DateTimeZone('America/Bogota'));
             Orders::insert($datosOrden);
             return redirect('orders')->with('Mensaje', 'Orden creada correctamente');
-        } catch (\Throwable $th) {
-            // var_dump($request,$th) ;
-            // return redirect('orders')->with('MensajeError', 'Hubo un error correctamente'.$th);
+        } catch (Exception $e) {
+            return redirect('orders.create')->with('Mensaje', 'Hubo un error al crear el producto');
         }
     }
 
@@ -61,36 +62,27 @@ class OrdersController extends Controller
     public function show($id)
     {
         //
-        $order = DB::table('orders')
-        ->join('products', function ($join) {
-            $join->on('orders.product_id', '=', 'products.id');
-        })
-        ->where('orders.id', '=', $id)
-        ->select('orders.*', 'products.name', 'products.description', 'products.price', 'products.photo')
-        ->get()[0];
+        $order = $this->getOrder($id);
 
-        if($order->status=='CREATED'&& $order->requestId!='' ){
+        if (($order->status == 'CREATED' || $order->status == 'PENDING') && $order->requestId != '') {
             $requestInformation = $this->requestInformation($order->requestId);
-            if($requestInformation){
+            if ($requestInformation->status() == "APPROVED") {
                 Orders::where('id', $id)->update(array(
                     'status' => 'PAYED'
                 ));
-            }else{
+            } else if ($requestInformation->status()  == "PENDING") {
+                Orders::where('id', $id)->update(array(
+                    'status' => 'PENDING'
+                ));
+            } else {
                 Orders::where('id', $id)->update(array(
                     'status' => 'REJECTED'
                 ));
             }
         }
-        $order = DB::table('orders')
-        ->join('products', function ($join) {
-            $join->on('orders.product_id', '=', 'products.id');
-        })
-        ->where('orders.id', '=', $id)
-        ->select('orders.*', 'products.name', 'products.description', 'products.price', 'products.photo')
-        ->get()[0];
+        $order = $this->getOrder($id);
 
-       
-        return view('orders.summary',compact('order'));
+        return view('orders.summary', compact('order'));
     }
 
     /**
@@ -113,20 +105,15 @@ class OrdersController extends Controller
     {
         //
         try {
-            $order = DB::table('orders')
-                ->join('products', function ($join) {
-                    $join->on('orders.product_id', '=', 'products.id');
-                })
-                ->where('orders.id', '=', $id)
-                ->select('orders.*', 'products.name', 'products.description', 'products.price', 'products.photo')
-                ->get()[0];
+
+            $order = $this->getOrder($id);
             $requestPlaceToPay = $this->createRequest($order);
             $servicePlaceToplay = $this->createServicePlaceToPay();
-
             $responsePlaceToPay = $servicePlaceToplay->request($requestPlaceToPay);
             if ($responsePlaceToPay->isSuccessful()) {
                 // STORE THE $response->requestId() and $response->processUrl() on your DB associated with the payment order
                 Orders::where('id', $id)->update(array(
+                    'status' => 'PENDING',
                     'requestId' => $responsePlaceToPay->requestId(),
                     'processUrl' => $responsePlaceToPay->processUrl()
                 ));
@@ -138,8 +125,6 @@ class OrdersController extends Controller
         } catch (Exception $e) {
             var_dump($e->getMessage());
         }
-
-        var_dump($requestPlaceToPay);
     }
 
     /**
@@ -153,9 +138,8 @@ class OrdersController extends Controller
     }
 
 
-    public function createRequest($order)
+    public function createRequest($myOrder)
     {
-        $myOrder = $order;
         $request = [
             'payment' => [
                 'reference' => $myOrder->id,
@@ -181,9 +165,9 @@ class OrdersController extends Controller
                 ]
             ],
             'expiration' => date('c', strtotime('+1 days')),
-            'returnUrl' => 'http://localhost:8000/orders/'.$order->id,
-            'cancelUrl' => 'http://localhost:8000/orders/'.$order->id,
-            'ipAddress' => '127.0.0.1',
+            'returnUrl' => env('APP_URL') . "/orders/" . $myOrder->id,
+            'cancelUrl' => env('APP_URL') . '/orders/' . $myOrder->id,
+            'ipAddress' => env('HTTP_CLIENT_IP'),
             'userAgent' => $_SERVER['HTTP_USER_AGENT']
         ];
 
@@ -191,13 +175,10 @@ class OrdersController extends Controller
     }
     public function createServicePlaceToPay()
     {
-        // Creating a random reference for the test
-        $secretKey = '024h1IlD';
-        $login = "6dd490faf9cb87a9862245da41170ff2";
         $placetopay = new PlacetoPay([
-            'login' => $login,
-            'tranKey' => $secretKey,
-            'url' => 'https://test.placetopay.com/redirection',
+            'login' => env('SOAP_LOGIN'),
+            'tranKey' => env('SOAP_TRANKEY'),
+            'url' => env('SOAP_URL_REDIRECTION'),
             'rest' => [
                 'timeout' => 30, // (optional) 15 by default
                 'connect_timeout' => 5, // (optional) 5 by default
@@ -205,18 +186,27 @@ class OrdersController extends Controller
         ]);
         return $placetopay;
     }
-    public function requestInformation($requestId){
+    public function requestInformation($requestId)
+    {
 
         $servicePlaceToplay = $this->createServicePlaceToPay();
         $response = $servicePlaceToplay->query($requestId);
+
         if ($response->isSuccessful()) {
-            if ($response->status()->isApproved()) {
-                // The payment has been approved
-                return $response->toArray();
-            }
+            return $response->status();
         } else {
             // There was some error with the connection so check the message
             return ($response->status()->message() . "\n");
         }
+    }
+    public function getOrder($id)
+    {
+        return DB::table('orders')
+            ->join('products', function ($join) {
+                $join->on('orders.product_id', '=', 'products.id');
+            })
+            ->where('orders.id', '=', $id)
+            ->select('orders.*', 'products.name', 'products.description', 'products.price', 'products.photo')
+            ->get()[0];
     }
 }
