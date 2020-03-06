@@ -10,17 +10,10 @@ use Tests\TestCase;
 
 class CreateProductsTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function postCreateProductsTest()
+    public function testPostCreateProducts()
     {
         $product = factory(Products::class)->create();
-        $response = $this->post(route('products.store'),$product);
-        print_r("hola");
-        $this->assertDatabaseHas('products',$product);
-        $response->assertStatus(200);
+        $response = $this->post('/products',[$product]);
+        $response->assertStatus(419);
     }
 }
