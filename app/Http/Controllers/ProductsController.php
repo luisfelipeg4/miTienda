@@ -42,6 +42,7 @@ class productsController extends Controller
         //
         // $datosProducto = $request->all();
         try {
+            
             $datosProducto = $request->except('_token');
             if ($request->file('photo')) {
                 $datosProducto['photo'] = $request->file('photo')->store('public/uploads');
