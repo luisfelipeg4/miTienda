@@ -22,10 +22,15 @@ class ProductsTest extends TestCase
         $response = $this->get('/products');
         $response->assertStatus(200);
     }
-    public function testDestroyProducts()
+    public function testDeleteroducts()
     {
         $this->withoutMiddleware();
         $response = $this->delete('/products/4');
+        $response->assertStatus(200);
+    }
+    public function testUpdateProducts()
+    {
+        $response = $this->patch('/products/1',['_token' => csrf_token()]);
         $response->assertStatus(200);
     }
 }
