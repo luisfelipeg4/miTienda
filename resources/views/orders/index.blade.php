@@ -45,7 +45,7 @@
                        PAGADA
                         @endif
                         @if($order->status =='PENDING')
-                       ESPERANDO AUTORIZACION
+                       ESPERANDO AUTORIZACIÓN
                         @endif
                     </td>
                     <td>

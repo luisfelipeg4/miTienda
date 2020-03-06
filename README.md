@@ -1,25 +1,31 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
 
-## About Laravel
+# Mi tienda 
+Por : Luis Felipe Garcia Herrera 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Sobre la APP
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+La aplicación te permite crear,leer,modificar,elimiar,listar productos que luego pueden ser ubicados por un usuario 
+para que el mismo pueda comprarlo. una vez el usuario haya creado el producto, tiene la opción de comprarlos en la página 
+principal de la applicación, cuando el usuario seleccione un producto lo llevara a la vista en la cual agregará los datos del 
+pagador y creará una Orden, el sistema lo redirigirá a otra vista donde puede observar todas las Ordenes con sus estados, con la 
+ópcion de observar el resumen y en dicha vista es donde tiene la ópcion de pagar el cual será redirigido al WebCheckOut de PlaceToPay, 
+una vez el usuario termina el proceso de pago lo retorna hacia el resumen de la orden donde podrá observar el estado del pago. 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+
+## Instalación 
+
+1. Para el correcto funcionamiento de la app es necesario crear la BD en mysql y correrlo en el puerto por defecto 3306
+
+mysql -u root -p
+create database prueba_tecnica;
+grant all on prueba_tecnica.* to miTienda@localhost identified by "admin";
+grant all on prueba_tecnica.* to miTienda@'%' identified by "admin";
+
+
+
+
+
 
 ## Learning Laravel
 

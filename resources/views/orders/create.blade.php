@@ -11,6 +11,11 @@
 <body>
 
     <div class="container">
+    
+    @if(Session::has('MensajeError')){{
+    Session::get('MensajeError')
+}}
+            @endif
     <h4 class="text-center py-3"> Producto a comprar</h4>
     <form action="{{url('/orders')}}" method="post" enctype="multipart/form-data">
         {{csrf_field()}}

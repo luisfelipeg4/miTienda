@@ -23,6 +23,8 @@ $factory->define(Orders::class, function (Faker $faker) {
         'customer_email' => $faker->email(),
         'customer_mobile' => $faker->numberBetween(0,1000000),
         'customer_name' => $faker->name(),
-        'status'=>'CREATED'
+        'status'=>'CREATED',
+        '_token' => csrf_token()
+
     ];
 });

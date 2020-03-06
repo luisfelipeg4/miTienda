@@ -23,6 +23,8 @@ $factory->define(Products::class, function (Faker $faker) {
         'name' => $faker->name,
         'description' => $faker->text,
         'price' => $faker->numberBetween(0,1000000),
-        'photo' => $faker->imageUrl()
+        'photo' => $faker->imageUrl(),
+        '_token' => csrf_token()
+
     ];
 });

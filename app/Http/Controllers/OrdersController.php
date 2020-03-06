@@ -49,7 +49,7 @@ class OrdersController extends Controller
             Orders::insert($datosOrden);
             return redirect('orders')->with('Mensaje', 'Orden creada correctamente');
         } catch (Exception $e) {
-            return redirect('orders.create')->with('Mensaje', 'Hubo un error al crear el producto');
+            return redirect('orders/create/'.$datosOrden['product_id'])->with('MensajeError', 'Hubo un error al crear el producto');
         }
     }
 
@@ -85,14 +85,7 @@ class OrdersController extends Controller
         return view('orders.summary', compact('order'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit()
-    {
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -104,8 +97,7 @@ class OrdersController extends Controller
     public function update($id)
     {
         //
-        try {
-
+        try {   
             $order = $this->getOrder($id);
             $requestPlaceToPay = $this->createRequest($order);
             $servicePlaceToplay = $this->createServicePlaceToPay();
@@ -127,17 +119,11 @@ class OrdersController extends Controller
         }
     }
 
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
+     * Crear base de pago para placeToPay
+     * @return request
      */
-    public function destroy()
-    {
-        //
-    }
-
-
     public function createRequest($myOrder)
     {
         $request = [
@@ -173,6 +159,10 @@ class OrdersController extends Controller
 
         return $request;
     }
+    /**
+     * Crear una instancia del Servicio de Place to play
+     * @return servico 
+     */
     public function createServicePlaceToPay()
     {
         $placetopay = new PlacetoPay([
@@ -186,9 +176,12 @@ class OrdersController extends Controller
         ]);
         return $placetopay;
     }
+    /**
+     * Obtiene informacion de una transaccion en placeToPay
+     * @param requestId codigo unico de transaccion de PlaceToPay
+     */
     public function requestInformation($requestId)
     {
-
         $servicePlaceToplay = $this->createServicePlaceToPay();
         $response = $servicePlaceToplay->query($requestId);
 
@@ -199,6 +192,10 @@ class OrdersController extends Controller
             return ($response->status()->message() . "\n");
         }
     }
+    /**
+     * Obtiene un solo registro de orden en la base de datos
+     * @param id codigo unico de la orden
+     */
     public function getOrder($id)
     {
         return DB::table('orders')
