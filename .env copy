@@ -13,8 +13,11 @@ DB_DATABASE=prueba_tecnica
 DB_USERNAME=miTienda
 DB_PASSWORD=admin   
 
+
 SOAP_LOGIN=6dd490faf9cb87a9862245da41170ff2
 SOAP_TRANKEY=024h1IlD
+SOAP_URL_REDIRECTION=https://test.placetopay.com/redirection
+
 
 
 BROADCAST_DRIVER=log

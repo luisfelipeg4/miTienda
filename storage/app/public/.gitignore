@@ -1,2 +1,6 @@
-*
-!.gitignore
+*.png
+*.jpg
+*.jpeg
+!PAYED.png
+!PENDING.png
+!REJECTED.png
